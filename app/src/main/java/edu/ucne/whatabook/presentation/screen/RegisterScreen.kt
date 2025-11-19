@@ -1,6 +1,5 @@
 package edu.ucne.whatabook.presentation.screen
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,7 +10,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import edu.ucne.whatabook.presentation.login.LoginViewModel
-import edu.ucne.whatabook.ui.theme.WhatABookTheme
 import androidx.compose.ui.tooling.preview.Preview
 import edu.ucne.whatabook.ui.theme.WhatABookTheme
 
@@ -33,29 +31,49 @@ fun RegisterScreen(
 
         Text(
             text = "Crear Cuenta",
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium,
+            color = Color.Black
         )
 
         Spacer(Modifier.height(24.dp))
 
+
         OutlinedTextField(
             value = user,
             onValueChange = { user = it },
-            label = { Text("Usuario") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Usuario", color = Color.Black) },
+            textStyle = LocalTextStyle.current.copy(color = Color.Black),
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Black,
+                cursorColor = Color.Black,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.Black
+            )
         )
 
         Spacer(Modifier.height(16.dp))
 
+
         OutlinedTextField(
             value = pass,
             onValueChange = { pass = it },
-            label = { Text("Contraseña") },
+            label = { Text("Contraseña", color = Color.Black) },
+            textStyle = LocalTextStyle.current.copy(color = Color.Black),
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Black,
+                cursorColor = Color.Black,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.Black
+            )
         )
 
         Spacer(Modifier.height(28.dp))
+
 
         Button(
             onClick = {
@@ -73,8 +91,9 @@ fun RegisterScreen(
 
         Spacer(Modifier.height(16.dp))
 
+
         TextButton(onClick = onBack) {
-            Text("Volver al Login")
+            Text("Volver al Login", color = Color.Black)
         }
     }
 }

@@ -1,6 +1,5 @@
 package edu.ucne.whatabook.presentation.screen
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -40,7 +39,8 @@ fun LoginScreen(
 
             Text(
                 "Iniciar sesión",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.Black
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -49,24 +49,39 @@ fun LoginScreen(
             OutlinedTextField(
                 value = state.userName,
                 onValueChange = { viewModel.onEvent(LoginEvent.UserNameChanged(it)) },
-                label = { Text("Usuario") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text("Usuario", color = Color.Black) },
+                textStyle = LocalTextStyle.current.copy(color = Color.Black),
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black,
+                    cursorColor = Color.Black,
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black
+                )
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Contraseña
+
             OutlinedTextField(
                 value = state.password,
                 onValueChange = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) },
-                label = { Text("Contraseña") },
+                label = { Text("Contraseña", color = Color.Black) },
+                textStyle = LocalTextStyle.current.copy(color = Color.Black),
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black,
+                    cursorColor = Color.Black,
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black
+                )
             )
 
             Spacer(modifier = Modifier.height(24.dp))
-
 
             Button(
                 onClick = { viewModel.onEvent(LoginEvent.SubmitLogin) },
@@ -80,11 +95,9 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-
             TextButton(onClick = onOpenRegister) {
-                Text("Crear cuenta")
+                Text("Crear cuenta", color = Color.Black)
             }
-
 
             state.error?.let {
                 Spacer(modifier = Modifier.height(12.dp))
