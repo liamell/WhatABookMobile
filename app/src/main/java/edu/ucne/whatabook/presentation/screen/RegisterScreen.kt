@@ -11,8 +11,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import edu.ucne.whatabook.presentation.login.LoginViewModel
-import edu.ucne.whatabook.ui.theme.LoginTheme
+import edu.ucne.whatabook.ui.theme.WhatABookTheme
 import androidx.compose.ui.tooling.preview.Preview
+import edu.ucne.whatabook.ui.theme.WhatABookTheme
 
 @Composable
 fun RegisterScreen(
@@ -81,7 +82,7 @@ fun RegisterScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewRegisterScreen() {
-    LoginTheme {
+    WhatABookTheme {
         RegisterScreen(
             onBack = {}
         )
