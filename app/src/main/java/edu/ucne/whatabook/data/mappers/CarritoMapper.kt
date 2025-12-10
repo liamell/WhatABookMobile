@@ -7,6 +7,7 @@ import edu.ucne.whatabook.domain.model.CarritoItem
 fun CarritoEntity.toDomain() = CarritoItem(
     itemId = itemId,
     libroId = libroId,
+    userId = userId,
     titulo = titulo,
     precio = precio,
     cantidad = cantidad,
@@ -16,6 +17,7 @@ fun CarritoEntity.toDomain() = CarritoItem(
 fun CarritoItem.toEntity() = CarritoEntity(
     itemId = itemId,
     libroId = libroId,
+    userId = userId,
     titulo = titulo,
     precio = precio,
     cantidad = cantidad,
