@@ -9,10 +9,20 @@ interface LibroRepository {
 
     suspend fun getLibroById(id: Int): Libro?
 
-    suspend fun syncLibros()
-
     suspend fun searchLibros(query: String): List<Libro>
 
     suspend fun getLibrosByGenero(generoId: Int): List<Libro>
-}
 
+    suspend fun syncLibros()
+
+    suspend fun insert(libro: Libro)
+
+    suspend fun insertAll(libros: List<Libro>)
+
+    suspend fun delete(id: Int)
+
+    suspend fun updateLibro(libro: Libro)
+
+    suspend fun insertRemoto(libro: Libro): Boolean
+
+}
