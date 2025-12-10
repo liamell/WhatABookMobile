@@ -8,12 +8,15 @@ fun UsuarioEntity.toDomain() = Usuario(
     usuarioId = usuarioId,
     nombre = nombre,
     correo = correo,
-    password = password
+    password = password,
+    fotoPerfilUri = fotoPerfilUri
+
 )
 
 fun Usuario.toEntity() = UsuarioEntity(
     usuarioId = usuarioId,
     nombre = nombre,
     correo = correo,
-    password = password
+    password = password,
+    fotoPerfilUri = fotoPerfilUri
 )
