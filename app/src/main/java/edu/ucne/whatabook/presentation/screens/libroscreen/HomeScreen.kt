@@ -1,6 +1,8 @@
 package edu.ucne.whatabook.presentation.screens.libroscreen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -49,8 +52,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -59,7 +65,8 @@ import edu.ucne.whatabook.presentation.home.HomeUiState
 import edu.ucne.whatabook.navigation.BottomNavigationBar
 import edu.ucne.whatabook.ui.theme.CardDark
 import edu.ucne.whatabook.ui.theme.CardWhite
-import androidx.compose.foundation.isSystemInDarkTheme
+import edu.ucne.whatabook.ui.theme.WhatABookTheme
+import edu.ucne.whatabook.R //
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,7 +112,7 @@ fun HomeScreen(
             TopAppBar(
                 modifier = Modifier
                     .statusBarsPadding()
-                    .height(60.dp),
+                    .height(65.dp),
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = backgroundColor),
                 title = {
                     Row(
@@ -113,19 +120,31 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            "WhatABook",
-                            color = Color(0xFF7D0000),
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Button(
-                            onClick = onCrearLibroClick,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.surface,
-                                contentColor = MaterialTheme.colorScheme.onSurface
+                        // Grupo: Título y Icono
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            // CAMBIO: Añadimos un Spacer para "bajar" el título
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            Text(
+                                "WhatABook",
+                                color = Color(0xFF7D0000),
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleLarge
                             )
-                        ) { Text("Crear Libro") }
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+
+                            Icon(
+                                painter = painterResource(id = R.drawable.openbook),
+                                contentDescription = "Libro",
+                                tint = Color(0xFF7D0000),
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+
+
+                        Spacer(modifier = Modifier.width(0.dp))
                     }
                 }
             )
@@ -323,7 +342,7 @@ fun LibroItem(
     modifier: Modifier = Modifier
 ) {
     val blueAction = MaterialTheme.colorScheme.secondary
-    val precioFormateado = "%,.2f".format(libro.precio)
+    val precioFormateado = "%,d".format(libro.precio.toInt())
 
     val realCardColor = if (isSystemInDarkTheme()) CardDark else CardWhite
 
@@ -372,6 +391,7 @@ fun LibroItem(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     color = textColor,
+                    textAlign = TextAlign.Center
                 )
 
                 Text(
@@ -380,6 +400,7 @@ fun LibroItem(
                     color = blueAction,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center
                 )
             }
 
