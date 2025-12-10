@@ -1,9 +1,9 @@
 package edu.ucne.whatabook.domain.usecase.libros
 
-import edu.ucne.whatabook.domain.model.Libro
 import edu.ucne.whatabook.domain.repository.LibroRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import edu.ucne.whatabook.domain.model.Libro
 
 class GetLibrosUseCase @Inject constructor(
     private val repository: LibroRepository
