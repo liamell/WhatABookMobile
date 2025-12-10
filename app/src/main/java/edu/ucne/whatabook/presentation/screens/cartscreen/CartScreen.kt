@@ -73,18 +73,21 @@ fun CartScreen(
                         Icon(
                             Icons.Filled.ShoppingCart,
                             contentDescription = "Carrito",
-                            tint = colorScheme.primary,
+                            // CAMBIO: Color blanco
+                            tint = Color.White,
                             modifier = Modifier.size(28.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             "Mi Carrito",
-                            color = colorScheme.onSurface,
+                            // CAMBIO: Color blanco
+                            color = Color.White,
                             style = MaterialTheme.typography.headlineSmall
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                // CAMBIO: Fondo con color primario (rojo)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = colorScheme.primary)
             )
         },
         bottomBar = {
