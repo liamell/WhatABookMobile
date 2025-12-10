@@ -1,12 +1,8 @@
 package edu.ucne.whatabook.data.local
 
-
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import edu.ucne.whatabook.data.local.dao.LibroDao
-import edu.ucne.whatabook.data.local.dao.CarritoDao
-import edu.ucne.whatabook.data.local.dao.GeneroDao
-import edu.ucne.whatabook.data.local.dao.UsuarioDao
+import edu.ucne.whatabook.data.local.dao.*
 import edu.ucne.whatabook.data.local.entity.*
 
 @Database(
@@ -14,9 +10,12 @@ import edu.ucne.whatabook.data.local.entity.*
         LibroEntity::class,
         UsuarioEntity::class,
         CarritoEntity::class,
-        GeneroEntity::class
+        GeneroEntity::class,
+        CompraEntity::class,
+        CompraDetalleEntity::class
     ],
-    version = 1,
+
+    version = 14,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -25,4 +24,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDao
     abstract fun carritoDao(): CarritoDao
     abstract fun generoDao(): GeneroDao
-}
+    abstract fun compraDao(): CompraDao
+
+ }
