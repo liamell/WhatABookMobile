@@ -15,7 +15,7 @@ import edu.ucne.whatabook.data.local.entity.*
         CompraDetalleEntity::class
     ],
 
-    version = 14,
+    version = 15,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
