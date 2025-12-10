@@ -1,5 +1,4 @@
 package edu.ucne.whatabook.data.local.dao
-
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -11,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CarritoDao {
 
-    @Query("SELECT * FROM carrito")
-    fun getCarrito(): Flow<List<CarritoEntity>>
+    @Query("SELECT * FROM carrito WHERE userId = :currentUserId")
+    fun getCarrito(currentUserId: Int): Flow<List<CarritoEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addItem(item: CarritoEntity)
@@ -23,6 +22,18 @@ interface CarritoDao {
     @Query("DELETE FROM carrito WHERE itemId = :id")
     suspend fun removeItem(id: Int)
 
-    @Query("DELETE FROM carrito")
-    suspend fun clearCarrito()
+    @Query("DELETE FROM carrito WHERE userId = :currentUserId")
+    suspend fun clearCarrito(currentUserId: Int)
+
+    @Query("SELECT * FROM carrito WHERE libroId = :libroId AND userId = :currentUserId LIMIT 1")
+    suspend fun getCartItemByLibroId(libroId: Int, currentUserId: Int): CarritoEntity?
+
+    @Query("SELECT * FROM carrito WHERE itemId = :itemId LIMIT 1")
+    suspend fun getCartItemById(itemId: Int): CarritoEntity?
+
+
+    @Query("UPDATE carrito SET cantidad = :newQuantity WHERE itemId = :itemId")
+    suspend fun updateQuantity(itemId: Int, newQuantity: Int)
+
+
 }
