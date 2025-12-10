@@ -5,12 +5,13 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "libros")
 data class LibroEntity(
-    @PrimaryKey(autoGenerate = true)
-    val libroId: Int = 0,
-    val titulo: String = "",
-    val autor: String = "",
-    val precio: Double = 0.0,
-    val descripcion: String = "",
-    val imagenUrl: String = "",
-    val generoId: Int = 0
+    @PrimaryKey
+    val libroId: Int,
+    val titulo: String,
+    val autores: String,
+    val descripcion: String,
+    val precio: Double,
+    val imagenUrl: String?,
+    val generoId: Int,
+    val cantidad: Int = 0
 )
