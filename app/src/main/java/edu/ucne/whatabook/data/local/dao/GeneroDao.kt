@@ -1,6 +1,4 @@
 package edu.ucne.whatabook.data.local.dao
-
-
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -15,5 +13,9 @@ interface GeneroDao {
     fun getGeneros(): Flow<List<GeneroEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertGeneros(list: List<GeneroEntity>)
+    suspend fun insertAll(list: List<GeneroEntity>)
+
+    @Query("SELECT * FROM generos WHERE generoId = :id")
+    suspend fun getGeneroById(id: Int): GeneroEntity?
+
 }
