@@ -1,5 +1,4 @@
 package edu.ucne.whatabook.data.local.entity
-
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -7,5 +6,5 @@ import androidx.room.PrimaryKey
 data class GeneroEntity(
     @PrimaryKey(autoGenerate = true)
     val generoId: Int = 0,
-    val nombre: String = ""
+    val tipoGeneros: String = ""
 )
