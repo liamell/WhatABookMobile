@@ -58,7 +58,6 @@ dependencies {
 
     //room
     implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
@@ -94,6 +93,17 @@ dependencies {
 
     //coil
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    implementation("androidx.compose.material:material-icons-extended")
+
+    implementation("androidx.compose.ui:ui-text")
+
+    implementation("androidx.compose.ui:ui")
+
+    //
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
 
 
 }
