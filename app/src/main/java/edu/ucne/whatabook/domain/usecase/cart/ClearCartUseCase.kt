@@ -1,11 +1,12 @@
 package edu.ucne.whatabook.domain.usecase.cart
 
 import edu.ucne.whatabook.domain.repository.CarritoRepository
+import javax.inject.Inject
 
-class ClearCartUseCase(
+class ClearCartUseCase @Inject constructor(
     private val repository: CarritoRepository
 ) {
-    suspend operator fun invoke() {
-        repository.clearCarrito()
+    suspend operator fun invoke(userId: Int) {
+        repository.clearCart(userId)
     }
 }
