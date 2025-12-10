@@ -58,7 +58,6 @@ dependencies {
 
     //room
     implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
@@ -91,6 +90,21 @@ dependencies {
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.datastore:datastore-core:1.1.1")
+
+    //coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    implementation("androidx.compose.material:material-icons-extended")
+
+    implementation("androidx.compose.ui:ui-text")
+
+    implementation("androidx.compose.ui:ui")
+
+    //
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+
 
 }
 
