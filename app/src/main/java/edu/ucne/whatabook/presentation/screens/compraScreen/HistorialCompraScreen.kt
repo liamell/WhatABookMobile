@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import edu.ucne.whatabook.data.local.entity.CompraConDetalles
 import edu.ucne.whatabook.domain.model.Libro
@@ -75,10 +76,25 @@ fun HistorialComprasScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(historial) { compraConDetalles ->
-                    CompraCard(compraConDetalles, viewModel)
+                if (historial.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillParentMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "No hay compras registradas.",
+                                color = colors.onSurfaceVariant
+                            )
+                        }
+                    }
+                } else {
+                    items(historial) { compraConDetalles ->
+                        CompraCard(compraConDetalles, viewModel)
+                    }
                 }
             }
         }
@@ -89,7 +105,8 @@ fun HistorialComprasScreen(
 fun CompraCard(compraConDetalles: CompraConDetalles, viewModel: CompraViewModel) {
     val compra = compraConDetalles.compra
     val detalles = compraConDetalles.detalles
-    val fechaFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+
+    val fechaFormat = SimpleDateFormat("dd/MM/yy HH:mm", Locale.getDefault())
     val fechaStr = fechaFormat.format(Date(compra.fecha))
     val colors = MaterialTheme.colorScheme
 
@@ -103,25 +120,18 @@ fun CompraCard(compraConDetalles: CompraConDetalles, viewModel: CompraViewModel)
         Column(modifier = Modifier.padding(10.dp)) {
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    text = fechaStr,
+                    text = "Fecha: $fechaStr",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                    color = colors.onSurface
-                )
-                Text(
-                    text = "Total: ${String.format("%,.2f RD$", compra.total)}",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                    color = colors.onSurface
+                    color = colors.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Visible
                 )
             }
-
-            Spacer(modifier = Modifier.height(6.dp))
 
             detalles.forEach { detalle ->
                 var libro by remember { mutableStateOf<Libro?>(null) }
@@ -145,26 +155,55 @@ fun CompraCard(compraConDetalles: CompraConDetalles, viewModel: CompraViewModel)
                                 .clip(RoundedCornerShape(4.dp))
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Column(modifier = Modifier.weight(1f)) {
+
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
                             Text(
                                 text = l.titulo,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 color = colors.onSurface
                             )
+
                             Text(
-                                text = "Cantidad: ${detalle.cantidad} | Precio: ${String.format("%,.2f RD$", detalle.precio)}",
+                                text = "Cantidad: ${detalle.cantidad}",
                                 fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                                color = colors.onSurfaceVariant
+                                color = colors.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+
+                            Text(
+                                text = String.format("%,d RD$", detalle.precio.toInt()),
+                                fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                                color = colors.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
-                    Divider(
-                        color = colors.onSurface.copy(alpha = 0.3f),
-                        thickness = 0.5.dp,
-                        modifier = Modifier.padding(vertical = 2.dp)
-                    )
                 }
+            }
+
+            Divider(
+                color = colors.onSurface.copy(alpha = 0.5f),
+                thickness = 1.dp,
+                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+            )
+
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "Total Pagado: ${String.format("%,d RD$", compra.total.toInt())}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                    color = colors.onSurface
+                )
             }
         }
     }
