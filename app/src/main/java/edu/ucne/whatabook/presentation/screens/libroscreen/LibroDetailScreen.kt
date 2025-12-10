@@ -37,10 +37,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import edu.ucne.whatabook.domain.model.Libro
+import edu.ucne.whatabook.ui.theme.WhatABookTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -153,5 +155,60 @@ fun LibroDetailScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+}
+
+
+
+private val SampleBookNormal = Libro(
+    libroId = 1,
+    titulo = "El Principito",
+    autores = "Antoine de Saint-Exupéry",
+    descripcion = "Una historia filosófica y poética sobre la amistad, el amor, la pérdida y el sentido de la vida.",
+    precio = 15.99,
+    imagenUrl = "https://ejemplo.com/principito.jpg",
+    generoId = 1,
+    cantidad = 5
+)
+
+private val SampleBookCeroPrecio = SampleBookNormal.copy(
+    titulo = "El Arte de la Guerra (Promoción)",
+    precio = 0.0,
+    descripcion = "Un clásico militar sobre estrategia, distribuido como promoción gratuita."
+)
+
+@Preview(showBackground = true, name = "1. Detalle - Precio Normal (Light)")
+@Composable
+private fun LibroDetailNormalPreview() {
+    WhatABookTheme {
+        LibroDetailScreen(
+            libro = SampleBookNormal,
+            onAgregarCarrito = {},
+            onVolver = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "2. Detalle - Precio Cero (Light)")
+@Composable
+private fun LibroDetailCeroPrecioPreview() {
+    WhatABookTheme {
+        LibroDetailScreen(
+            libro = SampleBookCeroPrecio,
+            onAgregarCarrito = {},
+            onVolver = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "3. Detalle - Cargando/Null (Light)")
+@Composable
+private fun LibroDetailNullPreview() {
+    WhatABookTheme {
+        LibroDetailScreen(
+            libro = null,
+            onAgregarCarrito = {},
+            onVolver = {}
+        )
     }
 }

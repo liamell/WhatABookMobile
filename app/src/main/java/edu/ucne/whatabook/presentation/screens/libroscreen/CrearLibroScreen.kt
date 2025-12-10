@@ -25,11 +25,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import edu.ucne.whatabook.domain.model.Libro
 import edu.ucne.whatabook.presentation.libros.LibroEvent
 import edu.ucne.whatabook.presentation.libros.LibroViewModel
+import edu.ucne.whatabook.ui.theme.WhatABookTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,19 +43,73 @@ fun CrearLibroScreen(
     val uiState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
+    CrearLibroForm(
+        titulo = uiState.titulo,
+        autor = uiState.autor,
+        descripcion = uiState.descripcion,
+        precio = uiState.precio,
+        cantidad = uiState.cantidad,
+        imagenUrl = uiState.imagenUrl,
+        generoId = uiState.generoId ?: 0,
+        onTituloChange = viewModel::onTituloChange,
+        onAutorChange = viewModel::onAutorChange,
+        onDescripcionChange = viewModel::onDescripcionChange,
+        onPrecioChange = viewModel::onPrecioChange,
+        onCantidadChange = viewModel::onCantidadChange,
+        onImagenUrlChange = viewModel::onImagenUrlChange,
+        onGeneroIdChange = viewModel::onGeneroIdChange,
+        onGuardarClick = {
+            val generoIdSeleccionado = uiState.generoId
+
+            if (generoIdSeleccionado != null) {
+                val nuevoLibro = Libro(
+                    libroId = 0,
+                    titulo = uiState.titulo.trim(),
+                    autores = uiState.autor.trim(),
+                    descripcion = uiState.descripcion.trim(),
+                    precio = uiState.precio.toDoubleOrNull() ?: 0.01,
+                    imagenUrl = uiState.imagenUrl,
+                    cantidad = uiState.cantidad.toIntOrNull() ?: 1,
+                    generoId = generoIdSeleccionado
+                )
+
+                coroutineScope.launch {
+                    viewModel.onEvent(LibroEvent.CrearLibro(nuevoLibro))
+                    viewModel.clearFormFields()
+                    onVolver()
+                }
+            }
+        }
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CrearLibroForm(
+    titulo: String,
+    autor: String,
+    descripcion: String,
+    precio: String,
+    cantidad: String,
+    imagenUrl: String,
+    generoId: Int,
+    onTituloChange: (String) -> Unit,
+    onAutorChange: (String) -> Unit,
+    onDescripcionChange: (String) -> Unit,
+    onPrecioChange: (String) -> Unit,
+    onCantidadChange: (String) -> Unit,
+    onImagenUrlChange: (String) -> Unit,
+    onGeneroIdChange: (Int) -> Unit,
+    onGuardarClick: () -> Unit
+) {
     val generos = listOf(
-        1 to "Romance",
-        2 to "Fantasía",
-        3 to "Misterio",
-        4 to "Terror",
-        5 to "Acción",
-        6 to "Aventura",
-        7 to "Literatura Juvenil",
-        8 to "Ciencia Ficción"
+        1 to "Romance", 2 to "Fantasía", 3 to "Misterio", 4 to "Terror",
+        5 to "Acción", 6 to "Aventura", 7 to "Literatura Juvenil", 8 to "Ciencia Ficción"
     )
 
     var expanded by remember { mutableStateOf(false) }
-    val generoSeleccionado = generos.find { it.first == uiState.generoId }
+    val generoSeleccionado = generos.find { it.first == generoId }
 
     val fieldModifier = Modifier
         .fillMaxWidth()
@@ -83,8 +139,8 @@ fun CrearLibroScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
-            value = uiState.titulo,
-            onValueChange = viewModel::onTituloChange,
+            value = titulo,
+            onValueChange = onTituloChange,
             label = { Text("Título") },
             modifier = fieldModifier,
             singleLine = true,
@@ -94,8 +150,8 @@ fun CrearLibroScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = uiState.autor,
-            onValueChange = viewModel::onAutorChange,
+            value = autor,
+            onValueChange = onAutorChange,
             label = { Text("Autor") },
             modifier = fieldModifier,
             singleLine = true,
@@ -105,8 +161,8 @@ fun CrearLibroScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = uiState.descripcion,
-            onValueChange = viewModel::onDescripcionChange,
+            value = descripcion,
+            onValueChange = onDescripcionChange,
             label = { Text("Descripción") },
             modifier = fieldModifier,
             singleLine = true,
@@ -116,8 +172,8 @@ fun CrearLibroScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = uiState.precio,
-            onValueChange = viewModel::onPrecioChange,
+            value = precio,
+            onValueChange = onPrecioChange,
             label = { Text("Precio") },
             modifier = fieldModifier,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -128,8 +184,8 @@ fun CrearLibroScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = uiState.cantidad,
-            onValueChange = viewModel::onCantidadChange,
+            value = cantidad,
+            onValueChange = onCantidadChange,
             label = { Text("Cantidad (Stock Inicial)") },
             modifier = fieldModifier,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -140,8 +196,8 @@ fun CrearLibroScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = uiState.imagenUrl,
-            onValueChange = viewModel::onImagenUrlChange,
+            value = imagenUrl,
+            onValueChange = onImagenUrlChange,
             label = { Text("URL de Imagen") },
             modifier = fieldModifier,
             singleLine = true,
@@ -175,7 +231,7 @@ fun CrearLibroScreen(
                     DropdownMenuItem(
                         text = { Text(nombre, color = MaterialTheme.colorScheme.onSurface) },
                         onClick = {
-                            viewModel.onGeneroIdChange(id)
+                            onGeneroIdChange(id)
                             expanded = false
                         }
                     )
@@ -186,28 +242,7 @@ fun CrearLibroScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = {
-                val generoIdSeleccionado = uiState.generoId
-
-                if (generoIdSeleccionado != null) {
-                    val nuevoLibro = Libro(
-                        libroId = 0,
-                        titulo = uiState.titulo.trim(),
-                        autores = uiState.autor.trim(),
-                        descripcion = uiState.descripcion.trim(),
-                        precio = uiState.precio.toDoubleOrNull() ?: 0.01,
-                        imagenUrl = uiState.imagenUrl,
-                        cantidad = uiState.cantidad.toIntOrNull() ?: 1,
-                        generoId = generoIdSeleccionado
-                    )
-
-                    coroutineScope.launch {
-                        viewModel.onEvent(LibroEvent.CrearLibro(nuevoLibro))
-                        viewModel.clearFormFields()
-                        onVolver()
-                    }
-                }
-            },
+            onClick = onGuardarClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -219,5 +254,54 @@ fun CrearLibroScreen(
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
+    }
+}
+
+
+@Preview(showBackground = true, name = "Crear Libro - Formulario Vacio")
+@Composable
+private fun CrearLibroFormPreview() {
+    WhatABookTheme {
+        CrearLibroForm(
+            titulo = "",
+            autor = "",
+            descripcion = "",
+            precio = "",
+            cantidad = "",
+            imagenUrl = "",
+            generoId = 0, // No seleccionado
+            onTituloChange = {},
+            onAutorChange = {},
+            onDescripcionChange = {},
+            onPrecioChange = {},
+            onCantidadChange = {},
+            onImagenUrlChange = {},
+            onGeneroIdChange = {},
+            onGuardarClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Crear Libro - Formulario Lleno")
+@Composable
+private fun CrearLibroFormLlenoPreview() {
+    WhatABookTheme {
+        CrearLibroForm(
+            titulo = "Cien Años de Soledad",
+            autor = "Gabriel García Márquez",
+            descripcion = "Una novela de realismo mágico.",
+            precio = "19.99",
+            cantidad = "50",
+            imagenUrl = "http://ejemplo.com/imagen.jpg",
+            generoId = 2, // Fantasía
+            onTituloChange = {},
+            onAutorChange = {},
+            onDescripcionChange = {},
+            onPrecioChange = {},
+            onCantidadChange = {},
+            onImagenUrlChange = {},
+            onGeneroIdChange = {},
+            onGuardarClick = {}
+        )
     }
 }

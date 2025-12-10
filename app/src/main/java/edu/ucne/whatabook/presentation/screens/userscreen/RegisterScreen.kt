@@ -2,22 +2,31 @@ package edu.ucne.whatabook.presentation.screens.userscreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,11 +39,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import edu.ucne.whatabook.R
+import edu.ucne.whatabook.presentation.usuario.RegisterUiState
 import edu.ucne.whatabook.presentation.usuario.RegisterViewModel
+import edu.ucne.whatabook.ui.theme.WhatABookTheme
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.ViewModel
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel = hiltViewModel(),
@@ -42,13 +62,55 @@ fun RegisterScreen(
     onLoginClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val colors = MaterialTheme.colorScheme
+    val appPrimaryRed = MaterialTheme.colorScheme.primary
 
     LaunchedEffect(uiState.success) {
         if (uiState.success) {
             onRegisterSuccess()
         }
     }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                modifier = Modifier.statusBarsPadding(),
+                title = {
+                    Image(
+                        painter = painterResource(R.drawable.openbookwhite),
+                        contentDescription = "Logo de WhatABook",
+                        modifier = Modifier.size(32.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = appPrimaryRed
+                )
+            )
+        }
+    ) { paddingValues ->
+        RegisterContent(
+            uiState = uiState,
+            paddingValues = paddingValues,
+            onNombreChange = viewModel::onNombreChange,
+            onEmailChange = viewModel::onEmailChange,
+            onPasswordChange = viewModel::onPasswordChange,
+            onRegisterClick = viewModel::register,
+            onLoginClick = onLoginClick
+        )
+    }
+}
+
+@Composable
+fun RegisterContent(
+    uiState: RegisterUiState,
+    paddingValues: PaddingValues,
+    onNombreChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onRegisterClick: () -> Unit,
+    onLoginClick: () -> Unit
+) {
+    val colors = MaterialTheme.colorScheme
 
     val textFieldColors = OutlinedTextFieldDefaults.colors(
         focusedTextColor = colors.onSurfaceVariant,
@@ -61,7 +123,9 @@ fun RegisterScreen(
     )
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
     ) {
 
         Image(
@@ -79,9 +143,8 @@ fun RegisterScreen(
 
         Box(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(horizontal = 24.dp, vertical = 32.dp)
-                .statusBarsPadding()
+                .align(Alignment.Center)
+                .padding(horizontal = 24.dp)
                 .graphicsLayer { alpha = 0.92f }
         ) {
 
@@ -96,13 +159,26 @@ fun RegisterScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Text(
-                    "WhatABook",
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = colors.primary
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        "WhatABook",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = colors.primary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Image(
+                        painter = painterResource(R.drawable.openbook),
+                        contentDescription = "Logo de WhatABook",
+                        modifier = Modifier.size(30.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
 
                 Text(
                     "Crear una cuenta",
@@ -113,7 +189,7 @@ fun RegisterScreen(
 
                 OutlinedTextField(
                     value = uiState.nombre,
-                    onValueChange = viewModel::onNombreChange,
+                    onValueChange = onNombreChange,
                     label = { Text("Nombre") },
                     modifier = Modifier.fillMaxWidth(),
                     isError = uiState.nombreError != null,
@@ -128,7 +204,7 @@ fun RegisterScreen(
 
                 OutlinedTextField(
                     value = uiState.email,
-                    onValueChange = viewModel::onEmailChange,
+                    onValueChange = onEmailChange,
                     label = { Text("Email") },
                     modifier = Modifier.fillMaxWidth(),
                     isError = uiState.emailError != null,
@@ -143,7 +219,7 @@ fun RegisterScreen(
 
                 OutlinedTextField(
                     value = uiState.password,
-                    onValueChange = viewModel::onPasswordChange,
+                    onValueChange = onPasswordChange,
                     label = { Text("Contraseña") },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
@@ -158,7 +234,7 @@ fun RegisterScreen(
                 Spacer(Modifier.height(20.dp))
 
                 Button(
-                    onClick = viewModel::register,
+                    onClick = onRegisterClick,
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !uiState.loading,
                     shape = RoundedCornerShape(12.dp),
@@ -184,6 +260,80 @@ fun RegisterScreen(
                     )
                 }
             }
+        }
+    }
+}
+
+
+// ======================================================
+// PREVIEWS
+// ======================================================
+
+private class FakeRegisterViewModel(initialState: RegisterUiState) : ViewModel() {
+    private val _uiState = MutableStateFlow(initialState)
+    val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
+
+    fun onNombreChange(nombre: String) { /* No-op */ }
+    fun onEmailChange(email: String) { /* No-op */ }
+    fun onPasswordChange(password: String) { /* No-op */ }
+    fun register() { /* No-op */ }
+}
+
+private class RegisterStateProvider : PreviewParameterProvider<RegisterUiState> {
+    override val values = sequenceOf(
+        RegisterUiState( // Estado Normal
+            nombre = "Jane Doe",
+            email = "jane@example.com",
+            password = "SecurePassword123"
+        ),
+        RegisterUiState( // Estado con Errores
+            nombre = "J",
+            email = "bademail",
+            password = "123",
+            nombreError = "El nombre es muy corto.",
+            emailError = "Formato de email incorrecto.",
+            passwordError = "La contraseña debe tener 6 caracteres.",
+            error = "Verifica los campos obligatorios."
+        ),
+        RegisterUiState( // Estado de Carga
+            loading = true
+        )
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true, name = "Register Screen")
+@Composable
+private fun RegisterScreenPreview(@PreviewParameter(RegisterStateProvider::class) uiState: RegisterUiState) {
+    WhatABookTheme {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Image(
+                            painter = painterResource(R.drawable.openbookwhite),
+                            contentDescription = "Logo de WhatABook",
+                            modifier = Modifier.size(32.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                    },
+                    colors = TopAppBarDefaults.smallTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+            }
+        ) { paddingValues ->
+            // Usamos un Fake ViewModel para pasar el estado de muestra
+            val fakeViewModel = FakeRegisterViewModel(uiState)
+            RegisterContent(
+                uiState = fakeViewModel.uiState.collectAsState().value,
+                paddingValues = paddingValues,
+                onNombreChange = {},
+                onEmailChange = {},
+                onPasswordChange = {},
+                onRegisterClick = {},
+                onLoginClick = {}
+            )
         }
     }
 }

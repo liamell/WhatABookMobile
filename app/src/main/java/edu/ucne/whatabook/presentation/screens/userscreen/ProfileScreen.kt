@@ -7,13 +7,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -45,11 +45,19 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import edu.ucne.whatabook.navigation.BottomNavigationBar
+import edu.ucne.whatabook.presentation.usuario.ProfileUiState
 import edu.ucne.whatabook.presentation.usuario.ProfileViewModel
+import edu.ucne.whatabook.ui.theme.WhatABookTheme
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +67,6 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    val scrollState = rememberScrollState()
 
     val appPrimaryRed = MaterialTheme.colorScheme.primary
 
@@ -90,106 +97,126 @@ fun ProfileScreen(
             )
         }
     ) { paddingValues ->
-        Column(
+        ProfileContent(
+            state = state,
+            paddingValues = paddingValues,
+            onProfileImageClick = { imagePicker.launch("image/*") },
+            onNavigateToHistory = onNavigateToHistory,
+            onLogoutClick = {
+                viewModel.logout()
+                onNavigate("login")
+            }
+        )
+    }
+}
+
+@Composable
+fun ProfileContent(
+    state: ProfileUiState,
+    paddingValues: PaddingValues,
+    onProfileImageClick: () -> Unit,
+    onNavigateToHistory: () -> Unit,
+    onLogoutClick: () -> Unit
+) {
+    val scrollState = rememberScrollState()
+    val appPrimaryRed = MaterialTheme.colorScheme.primary
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(horizontal = 16.dp)
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Card(
+            shape = CircleShape,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(scrollState),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .size(100.dp)
+                .clickable(onClick = onProfileImageClick),
+            colors = CardDefaults.cardColors(containerColor = Color.LightGray)
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Card(
-                shape = CircleShape,
-                modifier = Modifier
-                    .size(100.dp)
-                    .clickable { imagePicker.launch("image/*") },
-                colors = CardDefaults.cardColors(containerColor = Color.LightGray)
-            ) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    if (!state.profileImageUri.isNullOrEmpty()) {
-                        Image(
-                            painter = rememberAsyncImagePainter(state.profileImageUri),
-                            contentDescription = "Foto de perfil",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Avatar",
-                            tint = Color.DarkGray,
-                            modifier = Modifier.size(60.dp)
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(6.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    ProfileTextField(
-                        label = "Nombre",
-                        value = state.nombre,
-                        onValueChange = {},
-                        icon = Icons.Filled.Person,
-                        readOnly = true
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                if (!state.profileImageUri.isNullOrEmpty()) {
+                    Image(
+                        painter = rememberAsyncImagePainter(state.profileImageUri),
+                        contentDescription = "Foto de perfil",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    ProfileTextField(
-                        label = "Email",
-                        value = state.email,
-                        onValueChange = {},
-                        icon = Icons.Filled.MailOutline,
-                        readOnly = true
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    ProfileTextField(
-                        label = "Contraseña",
-                        value = "••••••••",
-                        onValueChange = {},
-                        icon = Icons.Filled.Lock,
-                        isPassword = true,
-                        readOnly = true
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = "Avatar",
+                        tint = Color.DarkGray,
+                        modifier = Modifier.size(60.dp)
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            OutlinedButton(
-                onClick = onNavigateToHistory,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Ver Historial de Compras", color = MaterialTheme.colorScheme.onSurface)
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Button(
-                onClick = {
-                    viewModel.logout()
-                    onNavigate("login")
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = appPrimaryRed)
-            ) {
-                Text("Cerrar Sesión")
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(6.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                ProfileTextField(
+                    label = "Nombre",
+                    value = state.nombre,
+                    onValueChange = {},
+                    icon = Icons.Filled.Person,
+                    readOnly = true
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ProfileTextField(
+                    label = "Email",
+                    value = state.email,
+                    onValueChange = {},
+                    icon = Icons.Filled.MailOutline,
+                    readOnly = true
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ProfileTextField(
+                    label = "Contraseña",
+                    value = "••••••••",
+                    onValueChange = {},
+                    icon = Icons.Filled.Lock,
+                    isPassword = true,
+                    readOnly = true
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        OutlinedButton(
+            onClick = onNavigateToHistory,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Ver Historial de Compras", color = MaterialTheme.colorScheme.onSurface)
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Button(
+            onClick = onLogoutClick,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = appPrimaryRed)
+        ) {
+            Text("Cerrar Sesión")
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
@@ -217,4 +244,70 @@ fun ProfileTextField(
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         modifier = Modifier.fillMaxWidth()
     )
+}
+
+private val SampleProfileState = ProfileUiState(
+    nombre = "María Rodríguez",
+    email = "maria.rodriguez@ucne.edu.do",
+    profileImageUri = "https://picsum.photos/id/1005/200/200"
+)
+
+private val SampleProfileStateNoAvatar = ProfileUiState(
+    nombre = "Juan Pérez",
+    email = "juan.perez@ucne.edu.do",
+    profileImageUri = null
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true, name = "1. Perfil - Con Imagen")
+@Composable
+private fun ProfileContentWithImagePreview() {
+    WhatABookTheme {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Mi Perfil") },
+                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+                )
+            },
+            bottomBar = {
+                BottomNavigationBar(onHome = { }, onCarrito = { }, onPerfil = { }, currentRoute = 3)
+            }
+        ) { paddingValues ->
+            ProfileContent(
+                state = SampleProfileState,
+                paddingValues = paddingValues,
+                onProfileImageClick = {},
+                onNavigateToHistory = {},
+                onLogoutClick = {}
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true, name = "2. Perfil - Sin Imagen (Avatar)")
+@Composable
+private fun ProfileContentNoImagePreview() {
+    WhatABookTheme {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Mi Perfil") },
+                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+                )
+            },
+            bottomBar = {
+                BottomNavigationBar(onHome = { }, onCarrito = { }, onPerfil = { }, currentRoute = 3)
+            }
+        ) { paddingValues ->
+            ProfileContent(
+                state = SampleProfileStateNoAvatar,
+                paddingValues = paddingValues,
+                onProfileImageClick = {},
+                onNavigateToHistory = {},
+                onLogoutClick = {}
+            )
+        }
+    }
 }
